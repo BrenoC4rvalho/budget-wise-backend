@@ -40,8 +40,9 @@ public class Budget {
     @Column(name = "expense_amount")
     private BigDecimal expense_amount;
 
-    @Column(name = "user_id")
-    private UUID userId;
+    @ManyToOne()
+    @JoinColumn(name = "user_id", updatable = false)
+    private User user;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

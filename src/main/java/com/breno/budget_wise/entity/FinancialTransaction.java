@@ -17,12 +17,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "transactions")
+@Entity(name = "financial_transactions")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transaction {
+public class FinancialTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,8 +43,9 @@ public class Transaction {
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than zero.")
     private BigDecimal amount;
 
-    @Column(name = "budget_id.")
-    private UUID budgetId;
+    @ManyToOne()
+    @JoinColumn(name = "budget_id")
+    private Budget budget;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
