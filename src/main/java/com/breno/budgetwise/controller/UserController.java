@@ -2,6 +2,7 @@ package com.breno.budgetwise.controller;
 
 import com.breno.budgetwise.dto.user.CreateUserDTO;
 import com.breno.budgetwise.dto.user.UserResponseDTO;
+import com.breno.budgetwise.entity.User;
 import com.breno.budgetwise.exceptions.user.UserNotFoundException;
 import com.breno.budgetwise.service.UserService;
 import jakarta.validation.Valid;
@@ -32,9 +33,19 @@ public class UserController {
 
     }
 
-    @GetMapping
-    public String getMethodName() {
-        return new String("Ola munda");
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getUser(@PathVariable UUID id) {
+        try {
+
+            UserResponseDTO user = userService.getUserById(id);
+            return ResponseEntity.ok().body(user);
+
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
 

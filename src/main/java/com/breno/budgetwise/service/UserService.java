@@ -21,17 +21,17 @@ public class UserService {
 
     public UserResponseDTO create(CreateUserDTO user) {
 
-        Optional<User> existUser = userRepository.findByUsernameOrEmail(user  .getUsername(), user.getEmail());
+        userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail())
+                .ifPresent(existingUser -> {
+                    if(existingUser.getUsername().equals(user.getUsername())) {
+                        throw new IllegalArgumentException("There is already a user with that username.");
+                    }
+                    if(existingUser.getEmail().equals(user.getEmail())) {
+                        throw new IllegalArgumentException("There is already a user with that email.");
+                    }
+                });
 
-        if(existUser.isPresent() && existUser.get().getUsername().equals(user.getUsername())) {
-            throw new IllegalArgumentException("There is already a user with that username.");
-        }
-
-        if(existUser.isPresent() && existUser.get().getEmail().equals(user.getEmail())) {
-            throw new IllegalArgumentException("There is already a user with that email.");
-        }
-
-        if(user.getDateOfBirth().plusYears(18).isBefore(LocalDate.now())) {
+        if(user.getDateOfBirth().plusYears(18).isAfter(LocalDate.now())) {
             throw new UnderageException();
         }
 
@@ -50,6 +50,21 @@ public class UserService {
                 .email(newUser.getEmail())
                 .dateOfBirth(newUser.getDateOfBirth())
                 .createdAt(newUser.getCreatedAt())
+                .build();
+
+    }
+
+    public UserResponseDTO getUserById(UUID id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+
+        return UserResponseDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .dateOfBirth(user.getDateOfBirth())
+                .createdAt(user.getCreatedAt())
                 .build();
 
     }
