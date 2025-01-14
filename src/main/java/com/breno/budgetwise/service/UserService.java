@@ -1,15 +1,17 @@
-package com.breno.budget_wise.service;
+package com.breno.budgetwise.service;
 
-import com.breno.budget_wise.dto.user.CreateUserDTO;
-import com.breno.budget_wise.dto.user.UserResponseDTO;
-import com.breno.budget_wise.entity.User;
-import com.breno.budget_wise.exceptions.user.UnderageException;
-import com.breno.budget_wise.repository.UserRepository;
+import com.breno.budgetwise.dto.user.CreateUserDTO;
+import com.breno.budgetwise.dto.user.UserResponseDTO;
+import com.breno.budgetwise.entity.User;
+import com.breno.budgetwise.exceptions.user.UnderageException;
+import com.breno.budgetwise.exceptions.user.UserNotFoundException;
+import com.breno.budgetwise.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -19,7 +21,7 @@ public class UserService {
 
     public UserResponseDTO create(CreateUserDTO user) {
 
-        Optional<User> existUser = userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail());
+        Optional<User> existUser = userRepository.findByUsernameOrEmail(user  .getUsername(), user.getEmail());
 
         if(existUser.isPresent() && existUser.get().getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("There is already a user with that username.");
@@ -49,6 +51,16 @@ public class UserService {
                 .dateOfBirth(newUser.getDateOfBirth())
                 .createdAt(newUser.getCreatedAt())
                 .build();
+
+    }
+
+    public void delete(UUID id) {
+
+        if(!userRepository.existsById(id)) {
+            throw new UserNotFoundException();
+        }
+
+        userRepository.deleteById(id);
 
     }
 }

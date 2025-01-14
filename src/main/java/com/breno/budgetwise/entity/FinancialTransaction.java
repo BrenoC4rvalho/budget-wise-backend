@@ -1,6 +1,6 @@
-package com.breno.budget_wise.entity;
+package com.breno.budgetwise.entity;
 
-import com.breno.budget_wise.enums.TransactionType;
+import com.breno.budgetwise.enums.TransactionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

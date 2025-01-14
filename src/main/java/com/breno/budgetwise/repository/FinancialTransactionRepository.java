@@ -1,6 +1,6 @@
-package com.breno.budget_wise.repository;
+package com.breno.budgetwise.repository;
 
-import com.breno.budget_wise.entity.FinancialTransaction;
+import com.breno.budgetwise.entity.FinancialTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

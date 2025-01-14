@@ -1,4 +1,4 @@
-package com.breno.budget_wise;
+package com.breno.budgetwise;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

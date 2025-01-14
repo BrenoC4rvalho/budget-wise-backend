@@ -1,6 +1,6 @@
-package com.breno.budget_wise.exceptions;
+package com.breno.budgetwise.exceptions;
 
-import com.breno.budget_wise.dto.ErrorMessageDTO;
+import com.breno.budgetwise.dto.ErrorMessageDTO;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;

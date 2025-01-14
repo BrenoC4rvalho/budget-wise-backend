@@ -1,4 +1,4 @@
-package com.breno.budget_wise.enums;
+package com.breno.budgetwise.enums;
 
 public enum TransactionType {
     INCOME,

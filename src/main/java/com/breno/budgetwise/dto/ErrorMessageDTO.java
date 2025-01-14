@@ -1,4 +1,4 @@
-package com.breno.budget_wise.dto;
+package com.breno.budgetwise.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

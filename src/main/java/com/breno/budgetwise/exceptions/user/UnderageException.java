@@ -1,4 +1,4 @@
-package com.breno.budget_wise.exceptions.user;
+package com.breno.budgetwise.exceptions.user;
 
 public class UnderageException extends RuntimeException {
 

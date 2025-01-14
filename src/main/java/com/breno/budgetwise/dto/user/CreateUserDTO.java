@@ -1,4 +1,4 @@
-package com.breno.budget_wise.dto.user;
+package com.breno.budgetwise.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

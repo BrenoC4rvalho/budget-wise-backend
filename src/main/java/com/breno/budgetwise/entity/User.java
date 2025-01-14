@@ -1,4 +1,4 @@
-package com.breno.budget_wise.entity;
+package com.breno.budgetwise.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,9 +1,9 @@
-package com.breno.budget_wise;
+package com.breno.budgetwise;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "com.breno.budget_wise")
+@SpringBootApplication
 public class BudgetWiseApplication {
 
 	public static void main(String[] args) {
