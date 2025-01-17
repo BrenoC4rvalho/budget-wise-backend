@@ -6,11 +6,12 @@ import com.breno.budgetwise.entity.User;
 import com.breno.budgetwise.exceptions.user.UnderageException;
 import com.breno.budgetwise.exceptions.user.UserNotFoundException;
 import com.breno.budgetwise.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,6 +20,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public UserResponseDTO create(CreateUserDTO user) {
 
         userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail())
@@ -35,14 +37,16 @@ public class UserService {
             throw new UnderageException();
         }
 
-        User newUser = userRepository.save(
-                User.builder()
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .password(user.getPassword())
-                        .dateOfBirth(user.getDateOfBirth())
-                        .build()
-        );
+        User newUser = User.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .dateOfBirth(user.getDateOfBirth())
+                .build();
+
+        newUser = userRepository.save(newUser);
+
+        System.out.println(newUser);
 
         return UserResponseDTO.builder()
                 .id(newUser.getId())

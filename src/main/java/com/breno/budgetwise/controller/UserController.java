@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@RestController("/users")
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -26,9 +27,9 @@ public class UserController {
             return ResponseEntity.status(201).body(result);
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(409).body(e.getMessage());
+            return ResponseEntity.status(409).body("message: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
 
     }
@@ -41,9 +42,9 @@ public class UserController {
             return ResponseEntity.ok().body(user);
 
         } catch (UserNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
+            return ResponseEntity.status(404).body("message: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
 
     }
@@ -57,9 +58,9 @@ public class UserController {
             return ResponseEntity.ok().body("User deleted successfully.");
 
         } catch (UserNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
+            return ResponseEntity.status(404).body("message: " + e.getMessage());
         } catch (Exception e) {
-            return  ResponseEntity.badRequest().body(e.getMessage());
+            return  ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
     }
 
