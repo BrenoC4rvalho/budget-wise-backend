@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,13 +34,27 @@ public class BudgetController {
 
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Object> getAllByUser(@PathVariable UUID userId) {
+        try {
+
+            List<BudgetRespondeDTO> result = budgetService.getAllByUserId(userId);
+            return ResponseEntity.ok().body(result);
+
+        } catch (BudgetNotFoundException e) {
+            return ResponseEntity.status(404).body("message: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("message: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> destroy(@PathVariable UUID id) {
         try {
 
             budgetService.delete(id);
             return ResponseEntity.ok().body("message: " + "Budget delete successfully.");
-            
+
         } catch (BudgetNotFoundException e) {
             return ResponseEntity.status(404).body("message: " + e.getMessage());
         } catch (Exception e) {

@@ -28,7 +28,5 @@ public class BudgetRespondeDTO {
     private BigDecimal incomeAmount;
     private BigDecimal expenseAmount;
     private UUID userId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updateAt;
-    
+
 }

@@ -8,7 +8,10 @@ import com.breno.budgetwise.repository.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BudgetService {
@@ -38,8 +41,24 @@ public class BudgetService {
                 .expenseAmount(newBudget.getExpenseAmount())
                 .incomeAmount(newBudget.getIncomeAmount())
                 .userId(newBudget.getUserId())
-                .createdAt(newBudget.getCreatedAt())
                 .build();
+    }
+
+    public List<BudgetRespondeDTO> getAllByUserId(UUID userId) {
+
+        List<Budget> budgets = budgetRepository.findAllByUserId(userId)
+                .orElseThrow(BudgetNotFoundException::new);
+
+
+        return budgets.stream()
+                .map(budget -> new BudgetRespondeDTO(
+                        budget.getId(),
+                        budget.getBudgetDate(),
+                        budget.getIncomeAmount(),
+                        budget.getExpenseAmount(),
+                        budget.getUserId()
+                ))
+                .collect(Collectors.toList());
     }
 
     public void delete(UUID id) {
