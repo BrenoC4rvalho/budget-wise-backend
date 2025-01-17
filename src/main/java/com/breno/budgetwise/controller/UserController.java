@@ -38,7 +38,7 @@ public class UserController {
     public ResponseEntity<Object> getUser(@PathVariable UUID id) {
         try {
 
-            UserResponseDTO result = userService.getUserById(id);
+            UserResponseDTO result = userService.getById(id);
             return ResponseEntity.ok().body(result);
 
         } catch (UserNotFoundException e) {

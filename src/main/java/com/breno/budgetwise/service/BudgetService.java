@@ -19,6 +19,19 @@ public class BudgetService {
     @Autowired
     BudgetRepository budgetRepository;
 
+    public BudgetRespondeDTO getById(UUID id) {
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(BudgetNotFoundException::new);
+
+        return new BudgetRespondeDTO(
+                budget.getId(),
+                budget.getBudgetDate(),
+                budget.getIncomeAmount(),
+                budget.getExpenseAmount(),
+                budget.getUserId()
+        );
+    }
+
     public BudgetRespondeDTO create(CreateBudgetDTO budget) {
 
         budgetRepository.findByBudgetDate(budget.getBudgetDate())
@@ -35,13 +48,13 @@ public class BudgetService {
 
         newBudget = budgetRepository.save(newBudget);
 
-        return BudgetRespondeDTO.builder()
-                .id(newBudget.getId())
-                .budgetDate(newBudget.getBudgetDate())
-                .expenseAmount(newBudget.getExpenseAmount())
-                .incomeAmount(newBudget.getIncomeAmount())
-                .userId(newBudget.getUserId())
-                .build();
+        return new BudgetRespondeDTO(
+                newBudget.getId(),
+                newBudget.getBudgetDate(),
+                newBudget.getIncomeAmount(),
+                newBudget.getExpenseAmount(),
+                newBudget.getUserId()
+        );
     }
 
     public List<BudgetRespondeDTO> getAllByUserId(UUID userId) {

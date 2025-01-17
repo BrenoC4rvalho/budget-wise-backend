@@ -19,6 +19,19 @@ public class BudgetController {
     @Autowired
     BudgetService budgetService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getBudget(@PathVariable UUID id) {
+        try {
+            BudgetRespondeDTO result = budgetService.getById(id);
+            return ResponseEntity.ok().body(result);
+
+        } catch (BudgetNotFoundException e) {
+            return ResponseEntity.status(404).body("message" + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("message" + e.getMessage());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Object> create(@Valid @RequestBody CreateBudgetDTO budget) {
         try {

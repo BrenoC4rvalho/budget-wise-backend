@@ -58,7 +58,7 @@ public class UserService {
 
     }
 
-    public UserResponseDTO getUserById(UUID id) {
+    public UserResponseDTO getById(UUID id) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
