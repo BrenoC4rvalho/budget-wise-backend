@@ -44,7 +44,6 @@ public class BudgetController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
-
     }
 
     @GetMapping("/user/{id}")

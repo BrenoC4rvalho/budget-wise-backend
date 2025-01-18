@@ -56,7 +56,6 @@ public class UserService {
                 .username(newUser.getUsername())
                 .email(newUser.getEmail())
                 .dateOfBirth(newUser.getDateOfBirth())
-                .createdAt(newUser.getCreatedAt())
                 .build();
 
     }
@@ -71,7 +70,6 @@ public class UserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .dateOfBirth(user.getDateOfBirth())
-                .createdAt(user.getCreatedAt())
                 .build();
 
     }

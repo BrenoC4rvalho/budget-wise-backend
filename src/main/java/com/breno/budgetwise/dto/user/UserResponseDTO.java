@@ -19,6 +19,5 @@ public class UserResponseDTO {
     private String username;
     private String email;
     private LocalDate dateOfBirth;
-    private LocalDateTime createdAt;
 
 }

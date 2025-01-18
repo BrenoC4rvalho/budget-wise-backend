@@ -32,7 +32,6 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
-
     }
 
     @GetMapping("/{id}")
@@ -47,7 +46,6 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
-
     }
 
 

@@ -1,10 +1,6 @@
 package com.breno.budgetwise.dto.budget;
 
-import com.breno.budgetwise.entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
