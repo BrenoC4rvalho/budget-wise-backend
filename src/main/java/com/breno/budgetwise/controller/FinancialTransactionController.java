@@ -60,4 +60,18 @@ public class FinancialTransactionController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> destroy(@PathVariable UUID id) {
+        try {
+
+            financialTransactionService.delete(id);
+            return ResponseEntity.ok().body("message: " + "Transaction delete successfully.");
+
+        } catch (FinancialTransactionNotFoundException e) {
+            return ResponseEntity.status(404).body("message: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("message: " + e.getMessage());
+        }
+    }
+
 }

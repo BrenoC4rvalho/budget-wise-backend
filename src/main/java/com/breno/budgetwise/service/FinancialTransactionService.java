@@ -68,4 +68,14 @@ public class FinancialTransactionService {
                 .collect(Collectors.toList());
     }
 
+    public void delete(UUID id) {
+
+        if(!financialTransactionRepository.existsById(id)) {
+            throw new FinancialTransactionNotFoundException();
+        }
+
+        financialTransactionRepository.deleteById(id);
+
+    }
+
 }
