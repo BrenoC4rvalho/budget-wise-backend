@@ -20,6 +20,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BudgetService budgetService;
+
     @Transactional
     public UserResponseDTO create(CreateUserDTO user) {
 
@@ -79,7 +82,14 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-        userRepository.deleteById(id);
+        try {
+
+            budgetService.deleteAllByUserId(id);
+            userRepository.deleteById(id);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while deleting the user and associated budgets: " + e.getMessage());
+        }
 
     }
 }

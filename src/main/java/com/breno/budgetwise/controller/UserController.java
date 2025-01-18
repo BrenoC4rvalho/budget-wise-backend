@@ -3,6 +3,7 @@ package com.breno.budgetwise.controller;
 import com.breno.budgetwise.dto.user.CreateUserDTO;
 import com.breno.budgetwise.dto.user.UserResponseDTO;
 import com.breno.budgetwise.entity.User;
+import com.breno.budgetwise.exceptions.budget.BudgetDeletionException;
 import com.breno.budgetwise.exceptions.user.UserNotFoundException;
 import com.breno.budgetwise.service.UserService;
 import jakarta.validation.Valid;
@@ -59,6 +60,8 @@ public class UserController {
 
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(404).body("message: " + e.getMessage());
+        } catch (BudgetDeletionException e) {
+            return ResponseEntity.status(500).body("message: " + e.getMessage());
         } catch (Exception e) {
             return  ResponseEntity.badRequest().body("message: " + e.getMessage());
         }

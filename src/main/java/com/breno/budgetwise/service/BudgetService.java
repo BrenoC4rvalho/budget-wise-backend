@@ -3,6 +3,7 @@ package com.breno.budgetwise.service;
 import com.breno.budgetwise.dto.budget.BudgetRespondeDTO;
 import com.breno.budgetwise.dto.budget.CreateBudgetDTO;
 import com.breno.budgetwise.entity.Budget;
+import com.breno.budgetwise.exceptions.budget.BudgetDeletionException;
 import com.breno.budgetwise.exceptions.budget.BudgetNotFoundException;
 import com.breno.budgetwise.repository.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,14 @@ public class BudgetService {
 
         budgetRepository.deleteById(id);
 
+    }
+
+    public void deleteAllByUserId(UUID userId) {
+        try {
+            budgetRepository.deleteAllByUserId(userId);
+        } catch (Exception e) {
+            throw new BudgetDeletionException(userId);
+        }
     }
 
 }
