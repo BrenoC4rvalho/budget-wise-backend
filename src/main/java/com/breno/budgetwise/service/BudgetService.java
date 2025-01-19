@@ -109,32 +109,4 @@ public class BudgetService {
             throw new BudgetDeletionException(userId);
         }
     }
-
-    public void updateIncomeAmount(UUID id, BigDecimal amount) {
-        try {
-            Budget budget = budgetRepository.findById(id)
-                    .orElseThrow(BudgetNotFoundException::new);
-
-            budget.setIncomeAmount(budget.getIncomeAmount().add(amount));
-            budgetRepository.save(budget);
-
-        } catch (Exception e) {
-            throw new BudgetUpdateException();
-        }
-    }
-
-    public void updateExpenseAmount(UUID id, BigDecimal amount) {
-        try {
-            Budget budget = budgetRepository.findById(id)
-                    .orElseThrow(BudgetNotFoundException::new);
-
-            budget.setExpenseAmount(budget.getExpenseAmount().add(amount));
-            budgetRepository.save(budget);
-
-        } catch (Exception e) {
-            throw new BudgetUpdateException();
-        }
-    }
-
-
 }

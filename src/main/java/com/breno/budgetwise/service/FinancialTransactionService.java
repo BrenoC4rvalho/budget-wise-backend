@@ -1,11 +1,8 @@
 package com.breno.budgetwise.service;
 
-import com.breno.budgetwise.dto.budget.BudgetRespondeDTO;
 import com.breno.budgetwise.dto.financialTransaction.CreateFinancialTransactionDTO;
 import com.breno.budgetwise.dto.financialTransaction.FinancialTransactionResponseDTO;
-import com.breno.budgetwise.entity.Budget;
 import com.breno.budgetwise.entity.FinancialTransaction;
-import com.breno.budgetwise.enums.TransactionType;
 import com.breno.budgetwise.exceptions.financialTransaction.DateMismatchException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionNotFoundException;
@@ -24,7 +21,7 @@ public class FinancialTransactionService {
     FinancialTransactionRepository financialTransactionRepository;
 
     @Autowired
-    BudgetService budgetService;
+    TransactionHelperService transactionHelpService;
 
     public FinancialTransactionResponseDTO getById(UUID id) {
         FinancialTransaction financialTransaction = financialTransactionRepository.findById(id)
@@ -49,30 +46,26 @@ public class FinancialTransactionService {
                 .budgetId(financialTransaction.getBudgetId())
                 .build();
 
-        BudgetRespondeDTO buget = budgetService.getById(newFinancialTransaction.getBudgetId());
+        if (transactionHelpService.dateMatch(newFinancialTransaction.getBudgetId(), newFinancialTransaction.getTransactionDate())) {
+            transactionHelpService.updateBudgetAmount(
+                    newFinancialTransaction.getBudgetId(),
+                    newFinancialTransaction.getAmount(),
+                    newFinancialTransaction.getType()
+            );
 
+            newFinancialTransaction = financialTransactionRepository.save(newFinancialTransaction);
 
-        if(!(financialTransaction.getTransactionDate().getYear() == buget.getBudgetDate().getYear()) &&
-                !(financialTransaction.getTransactionDate().getMonth() == buget.getBudgetDate().getMonth())
-        ) {
+            return new FinancialTransactionResponseDTO(
+                    newFinancialTransaction.getId(),
+                    newFinancialTransaction.getTitle(),
+                    newFinancialTransaction.getType(),
+                    newFinancialTransaction.getTransactionDate(),
+                    newFinancialTransaction.getAmount()
+            );
+        } else {
             throw new DateMismatchException();
         }
 
-        if(newFinancialTransaction.getType().equals(TransactionType.EXPENSE)) {
-            budgetService.updateExpenseAmount(newFinancialTransaction.getBudgetId(), newFinancialTransaction.getAmount());
-        } else if(newFinancialTransaction.getType().equals(TransactionType.INCOME)) {
-            budgetService.updateIncomeAmount(newFinancialTransaction.getBudgetId(), newFinancialTransaction.getAmount());
-        }
-
-        newFinancialTransaction = financialTransactionRepository.save(newFinancialTransaction);
-
-        return new FinancialTransactionResponseDTO(
-                newFinancialTransaction.getId(),
-                newFinancialTransaction.getTitle(),
-                newFinancialTransaction.getType(),
-                newFinancialTransaction.getTransactionDate(),
-                newFinancialTransaction.getAmount()
-        );
     }
 
     public List<FinancialTransactionResponseDTO> getAllFinancialTransactionByBudget(UUID budgetId) {
@@ -96,11 +89,11 @@ public class FinancialTransactionService {
         FinancialTransaction financialTransaction = financialTransactionRepository.findById(id)
                 .orElseThrow(FinancialTransactionNotFoundException::new);
 
-        if(financialTransaction.getType().equals(TransactionType.EXPENSE)) {
-            budgetService.updateExpenseAmount(financialTransaction.getBudgetId(), financialTransaction.getAmount().negate());
-        } else if(financialTransaction.getType().equals(TransactionType.INCOME)) {
-            budgetService.updateIncomeAmount(financialTransaction.getBudgetId(), financialTransaction.getAmount().negate());
-        }
+        transactionHelpService.updateBudgetAmount(
+                financialTransaction.getBudgetId(),
+                financialTransaction.getAmount().negate(),
+                financialTransaction.getType()
+        );
 
         financialTransactionRepository.deleteById(id);
 
