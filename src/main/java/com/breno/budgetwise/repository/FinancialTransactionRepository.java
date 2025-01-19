@@ -8,5 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface FinancialTransactionRepository extends JpaRepository<FinancialTransaction, UUID> {
-    public Optional<List<FinancialTransaction>> findAllByBudgetId(UUID budgetId);
+
+    Optional<List<FinancialTransaction>> findAllByBudgetId(UUID budgetId);
+    void deleteAllByBudgetId(UUID budgetId);
+
 }

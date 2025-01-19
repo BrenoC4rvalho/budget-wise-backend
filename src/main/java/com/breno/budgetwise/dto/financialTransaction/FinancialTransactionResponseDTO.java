@@ -22,4 +22,5 @@ public class FinancialTransactionResponseDTO {
     private LocalDate transactionDate;
     private BigDecimal amount;
 
+
 }

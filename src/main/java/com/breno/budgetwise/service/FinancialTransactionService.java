@@ -3,6 +3,8 @@ package com.breno.budgetwise.service;
 import com.breno.budgetwise.dto.financialTransaction.CreateFinancialTransactionDTO;
 import com.breno.budgetwise.dto.financialTransaction.FinancialTransactionResponseDTO;
 import com.breno.budgetwise.entity.FinancialTransaction;
+import com.breno.budgetwise.enums.TransactionType;
+import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionNotFoundException;
 import com.breno.budgetwise.repository.FinancialTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class FinancialTransactionService {
 
     @Autowired
     FinancialTransactionRepository financialTransactionRepository;
+
+    @Autowired
+    BudgetService budgetService;
 
     public FinancialTransactionResponseDTO getById(UUID id) {
         FinancialTransaction financialTransaction = financialTransactionRepository.findById(id)
@@ -40,6 +45,12 @@ public class FinancialTransactionService {
                 .transactionDate(financialTransaction.getTransactionDate())
                 .budgetId(financialTransaction.getBudgetId())
                 .build();
+
+        if(newFinancialTransaction.getType().equals(TransactionType.EXPENSE)) {
+            budgetService.updateExpenseAmount(newFinancialTransaction.getBudgetId(), newFinancialTransaction.getAmount());
+        } else if(newFinancialTransaction.getType().equals(TransactionType.INCOME)) {
+            budgetService.updateIncomeAmount(newFinancialTransaction.getBudgetId(), newFinancialTransaction.getAmount());
+        }
 
         newFinancialTransaction = financialTransactionRepository.save(newFinancialTransaction);
 
@@ -70,12 +81,25 @@ public class FinancialTransactionService {
 
     public void delete(UUID id) {
 
-        if(!financialTransactionRepository.existsById(id)) {
-            throw new FinancialTransactionNotFoundException();
+        FinancialTransaction financialTransaction = financialTransactionRepository.findById(id)
+                .orElseThrow(FinancialTransactionNotFoundException::new);
+
+        if(financialTransaction.getType().equals(TransactionType.EXPENSE)) {
+            budgetService.updateExpenseAmount(financialTransaction.getBudgetId(), financialTransaction.getAmount().negate());
+        } else if(financialTransaction.getType().equals(TransactionType.INCOME)) {
+            budgetService.updateIncomeAmount(financialTransaction.getBudgetId(), financialTransaction.getAmount().negate());
         }
 
         financialTransactionRepository.deleteById(id);
 
+    }
+
+    public void deleteAllByBudgetId(UUID budgetId) {
+        try {
+            financialTransactionRepository.deleteAllByBudgetId(budgetId);
+        } catch (Exception e) {
+            throw new FinancialTransactionDeletionException();
+        }
     }
 
 }

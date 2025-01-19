@@ -3,6 +3,7 @@ package com.breno.budgetwise.controller;
 import com.breno.budgetwise.dto.budget.BudgetRespondeDTO;
 import com.breno.budgetwise.dto.budget.CreateBudgetDTO;
 import com.breno.budgetwise.exceptions.budget.BudgetNotFoundException;
+import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
 import com.breno.budgetwise.service.BudgetService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,8 @@ public class BudgetController {
 
         } catch (BudgetNotFoundException e) {
             return ResponseEntity.status(404).body("message: " + e.getMessage());
+        } catch (FinancialTransactionDeletionException e) {
+            return ResponseEntity.status(500).body("message: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }

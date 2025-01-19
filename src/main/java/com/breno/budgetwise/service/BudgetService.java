@@ -5,10 +5,12 @@ import com.breno.budgetwise.dto.budget.CreateBudgetDTO;
 import com.breno.budgetwise.entity.Budget;
 import com.breno.budgetwise.exceptions.budget.BudgetDeletionException;
 import com.breno.budgetwise.exceptions.budget.BudgetNotFoundException;
+import com.breno.budgetwise.exceptions.budget.BudgetUpdateException;
 import com.breno.budgetwise.repository.BudgetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,6 +21,9 @@ public class BudgetService {
 
     @Autowired
     BudgetRepository budgetRepository;
+
+    @Autowired
+    FinancialTransactionService financialTransactionService;
 
     public BudgetRespondeDTO getById(UUID id) {
         Budget budget = budgetRepository.findById(id)
@@ -81,16 +86,55 @@ public class BudgetService {
             throw new BudgetNotFoundException();
         }
 
-        budgetRepository.deleteById(id);
+        try {
+            financialTransactionService.deleteAllByBudgetId(id);
+            budgetRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while deleting the budget and associated transactions: " + e.getMessage());
+        }
 
     }
 
     public void deleteAllByUserId(UUID userId) {
         try {
+
+            List<BudgetRespondeDTO> budgets = this.getAllByUserId(userId);
+            for(BudgetRespondeDTO budge: budgets) {
+                financialTransactionService.deleteAllByBudgetId(budge.getId());
+            }
+
             budgetRepository.deleteAllByUserId(userId);
+
         } catch (Exception e) {
             throw new BudgetDeletionException(userId);
         }
     }
+
+    public void updateIncomeAmount(UUID id, BigDecimal amount) {
+        try {
+            Budget budget = budgetRepository.findById(id)
+                    .orElseThrow(BudgetNotFoundException::new);
+
+            budget.setIncomeAmount(budget.getIncomeAmount().add(amount));
+            budgetRepository.save(budget);
+
+        } catch (Exception e) {
+            throw new BudgetUpdateException();
+        }
+    }
+
+    public void updateExpenseAmount(UUID id, BigDecimal amount) {
+        try {
+            Budget budget = budgetRepository.findById(id)
+                    .orElseThrow(BudgetNotFoundException::new);
+
+            budget.setExpenseAmount(budget.getExpenseAmount().add(amount));
+            budgetRepository.save(budget);
+
+        } catch (Exception e) {
+            throw new BudgetUpdateException();
+        }
+    }
+
 
 }
