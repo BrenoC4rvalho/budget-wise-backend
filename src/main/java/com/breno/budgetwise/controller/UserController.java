@@ -4,7 +4,9 @@ import com.breno.budgetwise.dto.user.CreateUserDTO;
 import com.breno.budgetwise.dto.user.UserResponseDTO;
 import com.breno.budgetwise.entity.User;
 import com.breno.budgetwise.exceptions.budget.BudgetDeletionException;
+import com.breno.budgetwise.exceptions.budget.BudgetNotFoundException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
+import com.breno.budgetwise.exceptions.user.UnderageException;
 import com.breno.budgetwise.exceptions.user.UserNotFoundException;
 import com.breno.budgetwise.service.UserService;
 import jakarta.validation.Valid;
@@ -30,8 +32,10 @@ public class UserController {
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(409).body("message: " + e.getMessage());
-        } catch (Exception e) {
+        } catch ( UnderageException e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("message" + e.getMessage());
         }
     }
 
@@ -45,7 +49,7 @@ public class UserController {
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(404).body("message: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("message: " + e.getMessage());
+            return ResponseEntity.status(500).body("message: " + e.getMessage());
         }
     }
 
@@ -57,12 +61,12 @@ public class UserController {
             userService.delete(id);
             return ResponseEntity.ok().body("User deleted successfully.");
 
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | BudgetNotFoundException  e) {
             return ResponseEntity.status(404).body("message: " + e.getMessage());
-        } catch (BudgetDeletionException | FinancialTransactionDeletionException e) {
-            return ResponseEntity.status(500).body("message: " + e.getMessage());
+        } catch (BudgetDeletionException | FinancialTransactionDeletionException   e) {
+            return ResponseEntity.status(400).body("message: " + e.getMessage());
         } catch (Exception e) {
-            return  ResponseEntity.badRequest().body("message: " + e.getMessage());
+            return ResponseEntity.status(500).body("message: " + e.getMessage());
         }
     }
 

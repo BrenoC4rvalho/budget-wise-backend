@@ -3,6 +3,7 @@ package com.breno.budgetwise.controller;
 import com.breno.budgetwise.dto.budget.CreateBudgetDTO;
 import com.breno.budgetwise.dto.financialTransaction.CreateFinancialTransactionDTO;
 import com.breno.budgetwise.dto.financialTransaction.FinancialTransactionResponseDTO;
+import com.breno.budgetwise.exceptions.financialTransaction.DateMismatchException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionNotFoundException;
 import com.breno.budgetwise.service.FinancialTransactionService;
 import jakarta.validation.Valid;
@@ -41,8 +42,10 @@ public class FinancialTransactionController {
             FinancialTransactionResponseDTO result = financialTransactionService.create(financialTransaction);
             return ResponseEntity.status(201).body(result);
 
-        } catch (Exception e) {
+        } catch (DateMismatchException e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("message: " + e.getMessage());
         }
     }
 

@@ -1,9 +1,12 @@
 package com.breno.budgetwise.service;
 
+import com.breno.budgetwise.dto.budget.BudgetRespondeDTO;
 import com.breno.budgetwise.dto.financialTransaction.CreateFinancialTransactionDTO;
 import com.breno.budgetwise.dto.financialTransaction.FinancialTransactionResponseDTO;
+import com.breno.budgetwise.entity.Budget;
 import com.breno.budgetwise.entity.FinancialTransaction;
 import com.breno.budgetwise.enums.TransactionType;
+import com.breno.budgetwise.exceptions.financialTransaction.DateMismatchException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionNotFoundException;
 import com.breno.budgetwise.repository.FinancialTransactionRepository;
@@ -45,6 +48,15 @@ public class FinancialTransactionService {
                 .transactionDate(financialTransaction.getTransactionDate())
                 .budgetId(financialTransaction.getBudgetId())
                 .build();
+
+        BudgetRespondeDTO buget = budgetService.getById(newFinancialTransaction.getBudgetId());
+
+
+        if(!(financialTransaction.getTransactionDate().getYear() == buget.getBudgetDate().getYear()) &&
+                !(financialTransaction.getTransactionDate().getMonth() == buget.getBudgetDate().getMonth())
+        ) {
+            throw new DateMismatchException();
+        }
 
         if(newFinancialTransaction.getType().equals(TransactionType.EXPENSE)) {
             budgetService.updateExpenseAmount(newFinancialTransaction.getBudgetId(), newFinancialTransaction.getAmount());

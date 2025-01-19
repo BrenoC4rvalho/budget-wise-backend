@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class FinancialTransaction {
     private TransactionType type;
 
     @NotNull(message = "Transaction date must not be null.")
+    @DateTimeFormat(pattern = "yyyy-MM")
     @Column(name = "transaction_date")
     private LocalDate transactionDate;
 

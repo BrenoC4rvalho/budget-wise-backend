@@ -3,6 +3,7 @@ package com.breno.budgetwise.controller;
 import com.breno.budgetwise.dto.budget.BudgetRespondeDTO;
 import com.breno.budgetwise.dto.budget.CreateBudgetDTO;
 import com.breno.budgetwise.exceptions.budget.BudgetNotFoundException;
+import com.breno.budgetwise.exceptions.financialTransaction.DateMismatchException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
 import com.breno.budgetwise.service.BudgetService;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class BudgetController {
         } catch (BudgetNotFoundException e) {
             return ResponseEntity.status(404).body("message" + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("message" + e.getMessage());
+            return ResponseEntity.status(500).body("message" + e.getMessage());
         }
     }
 
@@ -43,7 +44,7 @@ public class BudgetController {
         }  catch (IllegalArgumentException e) {
             return ResponseEntity.status(409).body("message: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("message: " + e.getMessage());
+            return ResponseEntity.status(500).body("message: " + e.getMessage());
         }
     }
 
