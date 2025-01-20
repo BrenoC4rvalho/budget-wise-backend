@@ -6,6 +6,7 @@ import com.breno.budgetwise.exceptions.budget.BudgetNotFoundException;
 import com.breno.budgetwise.exceptions.financialTransaction.DateMismatchException;
 import com.breno.budgetwise.exceptions.financialTransaction.FinancialTransactionDeletionException;
 import com.breno.budgetwise.service.BudgetService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +49,10 @@ public class BudgetController {
         }
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<Object> getAllByUser(@PathVariable UUID userId) {
+    @GetMapping()
+    public ResponseEntity<Object> getAllByUser(HttpServletRequest request) {
         try {
+            UUID userId = UUID.fromString(request.getAttribute("user_id").toString());
 
             List<BudgetRespondeDTO> result = budgetService.getAllByUserId(userId);
             return ResponseEntity.ok().body(result);

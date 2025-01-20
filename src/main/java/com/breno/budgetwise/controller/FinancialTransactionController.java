@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("/transactions")
 public class FinancialTransactionController {
 
     @Autowired
@@ -49,7 +49,7 @@ public class FinancialTransactionController {
         }
     }
 
-    @GetMapping("/budget/{budgetId}")
+    @GetMapping("/budget/{budgetId}/transactions")
     public ResponseEntity<Object> getAllFinancialTransactionByBudget(@PathVariable UUID budgetId) {
         try {
 

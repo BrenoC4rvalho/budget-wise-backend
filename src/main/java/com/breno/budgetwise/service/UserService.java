@@ -1,12 +1,16 @@
 package com.breno.budgetwise.service;
 
+import com.breno.budgetwise.dto.user.AuthUserRequestDTO;
+import com.breno.budgetwise.dto.user.AuthUserResponseDTO;
 import com.breno.budgetwise.dto.user.CreateUserDTO;
 import com.breno.budgetwise.dto.user.UserResponseDTO;
 import com.breno.budgetwise.entity.User;
+import com.breno.budgetwise.exceptions.user.InvalidCredentialsException;
 import com.breno.budgetwise.exceptions.user.UnderageException;
 import com.breno.budgetwise.exceptions.user.UserNotFoundException;
+import com.breno.budgetwise.providers.BCryptProvider;
+import com.breno.budgetwise.providers.JWTProvider;
 import com.breno.budgetwise.repository.UserRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,12 @@ public class UserService {
 
     @Autowired
     private BudgetService budgetService;
+
+    @Autowired
+    private BCryptProvider bCryptProvider;
+
+    @Autowired
+    JWTProvider jwtProvider;
 
     @Transactional
     public UserResponseDTO create(CreateUserDTO user) {
@@ -43,7 +53,7 @@ public class UserService {
         User newUser = User.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .password(user.getPassword())
+                .password(bCryptProvider.passwordEncode(user.getPassword()))
                 .dateOfBirth(user.getDateOfBirth())
                 .build();
 
@@ -88,6 +98,26 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while deleting the user and associated budgets: " + e.getMessage());
         }
+
+    }
+
+    public AuthUserResponseDTO authenticateUser(AuthUserRequestDTO authUser) {
+
+        if(authUser.email().isEmpty() && authUser.username().isEmpty()) {
+            throw new InvalidCredentialsException();
+        }
+
+        User user = userRepository.findByUsernameOrEmail(authUser.username().orElse(null), authUser.email().orElse(null))
+                .orElseThrow(InvalidCredentialsException::new);
+
+        if(!bCryptProvider.passwordMatch(authUser.password(), user.getPassword())) {
+            throw new InvalidCredentialsException();
+        }
+
+        return new AuthUserResponseDTO(
+                jwtProvider.encodeJWT(user.getId()),
+                jwtProvider.getExpirationDate().toEpochMilli()
+        );
 
     }
 }
